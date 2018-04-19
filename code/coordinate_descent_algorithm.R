@@ -3,9 +3,9 @@ coordinate_descent_algolithm = function(
     X,
     penalty = "lasso",
     lambda,
-    gamma,
+    gamma = 3.7,
     beta_init = NA,
-    iter_max = 1000,
+    iter_max = 10000,
     eps = 1e-3
 ){
     n = length(Y)
@@ -81,3 +81,16 @@ coordinate_descent_algolithm = function(
 
     return(args_list)
 }
+
+# n = 10000
+# beta = c(1.0, 2.0, -1.0, -2.0, 0.0, 0.0, 0.0, 0.0)
+# p = length(beta)
+# epsilon = rnorm(n = n, mean = 0, sd = 2)
+# X = matrix(runif(n = n*p, min = -1.0, max = 1.0), nrow = n, ncol = p)
+# X[, 1] = 1
+# Y = X%*%beta + epsilon
+# X = X[, -1]
+#
+# # initial values
+# coordinate_descent_algolithm(Y = Y, X = X, penalty = "lasso", lambda = 0.1)
+# coordinate_descent_algolithm(Y = Y, X = X, penalty = "scad", lambda = 0.1)
