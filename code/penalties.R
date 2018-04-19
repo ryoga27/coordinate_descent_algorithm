@@ -11,7 +11,7 @@ lasso_penalty_function = function(x, lambda, gamma){
 # d = length(x)
 # out = rep(0, d)
 # for(j in 1:d){
-#     out[j] = lasso_penalty_function(x[j], lambda = 0.5, gamma = 3.7)
+#     out[j] = lasso_penalty_function(x[j], lambda = 0.5)
 # }
 # plot(x, out, type = "n")
 # grid()
@@ -89,7 +89,7 @@ scad_penalty_solution = function(x, lambda, gamma = 3.7){
 }
 
 # x = seq(from = -2, to = 2, by = 0.1)
-# out = scad_penalty_solution(x = x, lambda = 0.5)
+# out = scad_penalty_solution(x = x, lambda = 0.5, gamma = 3.7)
 # print(out)
 # plot(x, out, type = "n")
 # grid()
