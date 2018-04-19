@@ -2,7 +2,7 @@ lasso_penalty_function = function(x, lambda, gamma){
     out = 0
     d = length(x)
     for(j in 1:d){
-        out = out + abs(x[j])
+        out = out + lambda*abs(x[j])
     }
     return(out)
 }
