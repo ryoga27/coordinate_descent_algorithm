@@ -1,26 +1,23 @@
-soft_threshold_function = function(x, lambda){
+lasso_penalty_function = function(x, lambda, gamma){
+    out = 0
     d = length(x)
-    out = rep(NA, d)
     for(j in 1:d){
-        if(abs(x[j]) <= lambda){
-            out[j] = 0
-        }
-        if(abs(x[j]) >  lambda)
-            out[j] = x[j]
-        }
+        out = out + abs(x[j])
     }
     return(out)
 }
 
 # x = seq(from = -2, to = 2, by = 0.1)
-# out = soft_threshold_function(x = x, lambda = 0.5)
-# print(out)
+# d = length(x)
+# out = rep(0, d)
+# for(j in 1:d){
+#     out[j] = lasso_penalty_function(x[j], lambda = 0.5, gamma = 3.7)
+# }
 # plot(x, out, type = "n")
 # grid()
-# points(x, x, type = "l", lty = 3)
-# points(x, out, type = "l", lwd = 2)
+# points(x, out, pch = 20)
 
-lasso_penalty_function = function(x, lambda){
+lasso_penalty_solution = function(x, lambda, gamma){
     d = length(x)
     out = rep(NA, d)
     for(j in 1:d){
@@ -35,7 +32,7 @@ lasso_penalty_function = function(x, lambda){
 }
 
 # x = seq(from = -2, to = 2, by = 0.1)
-# out = lasso_penalty_function(x = x, lambda = 0.5)
+# out = lasso_penalty_solution(x = x, lambda = 0.5)
 # print(out)
 # plot(x, out, type = "n")
 # grid()
@@ -43,6 +40,33 @@ lasso_penalty_function = function(x, lambda){
 # points(x, out, type = "l", lwd = 2)
 
 scad_penalty_function = function(x, lambda, gamma = 3.7){
+    out = 0
+    d = length(x)
+    for(j in 1:d){
+        if(abs(x[j]) <= lambda){
+            out = out + lambda*abs(x[j])
+        }
+        if(lambda < abs(x[j]) & abs(x[j]) <= gamma*lambda){
+            out = out - (abs(x[j])^2 - 2*gamma*lambda*abs(x[j]) + lambda^2)/(2*(gamma - 1))
+        }
+        if(gamma*lambda < abs(x[j])){
+            out = out + (gamma + 1)*lambda^2/2
+        }
+    }
+    return(out)
+}
+
+# x = seq(from = -2, to = 2, by = 0.1)
+# d = length(x)
+# out = rep(0, d)
+# for(j in 1:d){
+#     out[j] = scad_penalty_function(x[j], lambda = 0.5, gamma = 3.7)
+# }
+# plot(x, out, type = "n")
+# grid()
+# points(x, out, pch = 20)
+
+scad_penalty_solution = function(x, lambda, gamma = 3.7){
     d = length(x)
     out = rep(NA, d)
     for(j in 1:d){
@@ -65,10 +89,9 @@ scad_penalty_function = function(x, lambda, gamma = 3.7){
 }
 
 # x = seq(from = -2, to = 2, by = 0.1)
-# out = scad_penalty_function(x = x, lambda = 0.5)
+# out = scad_penalty_solution(x = x, lambda = 0.5)
 # print(out)
 # plot(x, out, type = "n")
 # grid()
 # points(x, x, type = "l", lty = 3)
 # points(x, out, type = "l", lwd = 2)
-# grid()
