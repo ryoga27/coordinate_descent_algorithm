@@ -11,9 +11,9 @@ coordinate_descent_algolithm = function(
     n = length(Y)
     d = ncol(X)
 
-    y_mean = mean(y)
-    y_sd   = sd(y)
-    y      = Y - mean(Y)
+    y_mean = mean(Y)
+    y_sd   = sd(Y)
+    y      = Y - y_mean
 
     x = scale(X)
     X_mean = attr(x, "scaled:center")
@@ -26,7 +26,7 @@ coordinate_descent_algolithm = function(
         }
     }
 
-    list_init = list(beta_init = beta_init, lambda = lambda, iter_max = iter_max, intercept = intercept)
+    beta_0_list = rep(0, iter_max)
     beta_list = list()
     obj_list  = list()
     args_list = list()
@@ -35,10 +35,18 @@ coordinate_descent_algolithm = function(
         beta = rep(0, d)
     }
     if(all(!is.na(beta_init))){
-        beta = beta_init[-1]*X_sd
+        beta = beta_init*X_sd
     }
-
     beta_list[[1]] = beta
+
+    beta_0 = (1/n)*(y - x%*%beta)
+    beta_0_list[1]
+
+    list_init = list(
+        beta_init = beta_init,
+        lambda = lambda,
+        iter_max = iter_max
+    )
 
     if(penalty == "lasso"){
         penalty_function = lasso_penalty_function
@@ -51,26 +59,32 @@ coordinate_descent_algolithm = function(
 
     obj = rep(0, iter_max)
     obj[1] = (1/n)*sum((y - x%*%beta)^2) + penalty_function(beta, lambda)
+
     for(s in 1:iter_max){
         for(j in 1:d){
-            r = y - x[, -j]%*%beta[-j]
+            r = y - beta_0 - x[, -j]%*%beta[-j]
             z = (1/n)*x[, j]%*%r
             beta[j] = penalty_solution(z, lambda = lambda, gamma = gamma)
         }
         beta_list[[s + 1]] = beta
-        obj[s + 1] = (1/n)*sum((y - x%*%beta)^2) + penalty_function(beta, lambda)
+
+        beta_0 = (1/n)*sum(y - x%*%beta)
+        beta_0_list[s] = beta_0
+
+        obj[s + 1] = (1/n)*sum((y - beta_0 - x%*%beta)^2) + penalty_function(beta, lambda)
         convergence = (abs(obj[s + 1] - obj[s]) < eps)
         if(convergence == TRUE){
             beta = beta_list[[s]]
+            beta_0 = beta_0_list[s]
             obj = obj[1:s+1]
             break
         }
     }
 
+    beta_0_hat = beta_0 + y_mean
     beta_hat = beta/X_sd
-    const = mean(Y - X%*%beta_hat)
 
-    coefficients = matrix(c(const, beta_hat), nrow = d + 1, ncol = 1)
+    coefficients = matrix(c(beta_0_hat, beta_hat), nrow = d + 1, ncol = 1)
     rownames(coefficients) = c("(Intercept)", x_colnames)
     colnames(coefficients) = "coefficients"
 
@@ -81,16 +95,3 @@ coordinate_descent_algolithm = function(
 
     return(args_list)
 }
-
-# n = 10000
-# beta = c(1.0, 2.0, -1.0, -2.0, 0.0, 0.0, 0.0, 0.0)
-# p = length(beta)
-# epsilon = rnorm(n = n, mean = 0, sd = 2)
-# X = matrix(runif(n = n*p, min = -1.0, max = 1.0), nrow = n, ncol = p)
-# X[, 1] = 1
-# Y = X%*%beta + epsilon
-# X = X[, -1]
-#
-# # initial values
-# coordinate_descent_algolithm(Y = Y, X = X, penalty = "lasso", lambda = 0.1)
-# coordinate_descent_algolithm(Y = Y, X = X, penalty = "scad", lambda = 0.1)
