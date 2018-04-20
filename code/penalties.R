@@ -1,4 +1,4 @@
-lasso_penalty_function = function(x, lambda, gamma){
+lasso_penalty_function = function(x, lambda){
     out = 0
     d = length(x)
     for(j in 1:d){
@@ -17,7 +17,7 @@ lasso_penalty_function = function(x, lambda, gamma){
 # grid()
 # points(x, out, pch = 20)
 
-lasso_penalty_solution = function(x, lambda, gamma){
+lasso_penalty_solution = function(x, lambda){
     d = length(x)
     out = rep(NA, d)
     for(j in 1:d){
@@ -95,3 +95,23 @@ scad_penalty_solution = function(x, lambda, gamma = 3.7){
 # grid()
 # points(x, x, type = "l", lty = 3)
 # points(x, out, type = "l", lwd = 2)
+
+penalty_function = function(x, lambda, gamma = 3.7, penalty = "lasso"){
+    if(penalty == "lasso"){
+        out = lasso_penalty_function(x = x, lambda = lambda)
+    }
+    if(penalty == "scad"){
+        out = scad_penalty_function(x = x, lambda = lambda, gamma = gamma)
+    }
+    return(out)
+}
+
+penalty_solution = function(x, lambda, gamma = 3.7, penalty = "lasso"){
+    if(penalty == "lasso"){
+        out = lasso_penalty_solution(x = x, lambda = lambda)
+    }
+    if(penalty == "scad"){
+        out = scad_penalty_solution(x = x, lambda = lambda, gamma = gamma)
+    }
+    return(out)
+}

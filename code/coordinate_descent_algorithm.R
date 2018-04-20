@@ -43,35 +43,27 @@ coordinate_descent_algolithm = function(
     beta_0_list[1]
 
     list_init = list(
+        penalty = penalty, 
         beta_init = beta_init,
         lambda = lambda,
         iter_max = iter_max
     )
 
-    if(penalty == "lasso"){
-        penalty_function = lasso_penalty_function
-        penalty_solution = lasso_penalty_solution
-    }
-    if(penalty == "scad"){
-        penalty_function = scad_penalty_function
-        penalty_solution = scad_penalty_solution
-    }
-
     obj = rep(0, iter_max)
-    obj[1] = (1/n)*sum((y - x%*%beta)^2) + penalty_function(beta, lambda)
+    obj[1] = (1/n)*sum((y - x%*%beta)^2) + penalty_function(beta, lambda, penalty = penalty)
 
     for(s in 1:iter_max){
         for(j in 1:d){
             r = y - beta_0 - x[, -j]%*%beta[-j]
             z = (1/n)*x[, j]%*%r
-            beta[j] = penalty_solution(z, lambda = lambda, gamma = gamma)
+            beta[j] = penalty_solution(z, lambda = lambda, gamma = gamma, penalty = penalty)
         }
         beta_list[[s + 1]] = beta
 
         beta_0 = (1/n)*sum(y - x%*%beta)
         beta_0_list[s] = beta_0
 
-        obj[s + 1] = (1/n)*sum((y - beta_0 - x%*%beta)^2) + penalty_function(beta, lambda)
+        obj[s + 1] = (1/n)*sum((y - beta_0 - x%*%beta)^2) + penalty_function(beta, lambda, penalty = penalty)
         convergence = (abs(obj[s + 1] - obj[s]) < eps)
         if(convergence == TRUE){
             beta = beta_list[[s]]
