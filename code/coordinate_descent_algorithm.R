@@ -39,11 +39,11 @@ coordinate_descent_algolithm = function(
     }
     beta_list[[1]] = beta
 
-    beta_0 = (1/n)*(y - x%*%beta)
-    beta_0_list[1]
+    beta_0 = (1/n)*sum(y - x%*%beta)
+    beta_0_list[1] = beta_0
 
     list_init = list(
-        penalty = penalty, 
+        penalty = penalty,
         beta_init = beta_init,
         lambda = lambda,
         iter_max = iter_max
@@ -69,6 +69,7 @@ coordinate_descent_algolithm = function(
             beta = beta_list[[s]]
             beta_0 = beta_0_list[s]
             obj = obj[1:s+1]
+            n_iter = s
             break
         }
     }
@@ -82,7 +83,8 @@ coordinate_descent_algolithm = function(
 
     args_list = list(
         coefficients = coefficients,
-        lambda = lambda
+        lambda = lambda,
+        n_iter = n_iter
     )
 
     return(args_list)
