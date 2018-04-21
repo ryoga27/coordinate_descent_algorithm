@@ -61,15 +61,12 @@ coordinate_descent_algolithm = function(
         beta_list[[s + 1]] = beta
 
         beta_0 = (1/n)*sum(y - x%*%beta)
-        beta_0_list[s] = beta_0
+        beta_0_list[s + 1] = beta_0
 
         obj[s + 1] = (1/n)*sum((y - beta_0 - x%*%beta)^2) + penalty_function(beta, lambda, penalty = penalty)
         convergence = (abs(obj[s + 1] - obj[s]) < eps)
         if(convergence == TRUE){
-            beta = beta_list[[s]]
-            beta_0 = beta_0_list[s]
-            obj = obj[1:s+1]
-            n_iter = s
+            times_iter = s
             break
         }
     }
@@ -84,8 +81,13 @@ coordinate_descent_algolithm = function(
     args_list = list(
         coefficients = coefficients,
         lambda = lambda,
-        n_iter = n_iter
+        times_iter = times_iter,
+        init = list_init,
+        process = list(
+            beta_0 = beta_0_list,
+            beta = beta_list,
+            obj = obj_list
+        )
     )
-
     return(args_list)
 }
