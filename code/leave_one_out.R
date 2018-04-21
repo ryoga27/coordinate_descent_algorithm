@@ -25,7 +25,7 @@ leave_one_out = function(Y, X, lambdas){
     opt_score = min(scores)
     opt_index = (1:length(scores))[scores == opt_score]
     opt_lambda = lambdas[opt_index]
-    opt_result = result[[opt_index]]
+    opt_result = result_list[[opt_index]]
 
     out = list(
         opt_lambda = opt_lambda,
