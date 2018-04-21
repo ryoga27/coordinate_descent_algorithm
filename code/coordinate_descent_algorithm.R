@@ -1,4 +1,4 @@
-coordinate_descent_algolithm = function(
+coordinate_descent_algorithm = function(
     Y,
     X,
     penalty = "lasso",
