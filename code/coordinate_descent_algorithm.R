@@ -33,14 +33,16 @@ coordinate_descent_algorithm = function(
     args_list = list()
 
     if(all(is.na(beta_init))){
+        beta_0 = (1/n)*sum(y - x%*%beta)
         beta = rep(0, d)
     }
-    if(all(!is.na(beta_init))){
-        beta = beta_init*X_sd
-    }
-    beta_list[[1]] = beta
 
-    beta_0 = (1/n)*sum(y - x%*%beta)
+    if(all(!is.na(beta_init))){
+        beta_0 = beta_init[-1]
+        beta = beta_init[-1]*X_sd
+    }
+
+    beta_list[[1]] = beta
     beta_0_list[1] = beta_0
 
     init_list = list(
