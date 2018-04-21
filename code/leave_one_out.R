@@ -1,4 +1,4 @@
-leave_one_out = function(Y, X, lambdas){
+leave_one_out = function(Y, X, lambdas, penalty = "lasso"){
 
     n = length(Y)
     n_lambdas = length(lambdas)
@@ -14,11 +14,11 @@ leave_one_out = function(Y, X, lambdas){
             Y_train = Y[-i, ]
             X_test  = X[ i, ]
             X_train = X[-i, ]
-            result = coordinate_descent_algolithm(Y = Y_train, X = X_train, lambda = lambda)
+            result = coordinate_descent_algolithm(Y = Y_train, X = X_train, lambda = lambda, penalty = penalty)
             Y_pred = predict(result, X_test)
             score = score + (Y_pred - Y_test)^2
         }
-        result_list[[l]] = coordinate_descent_algolithm(Y = Y, X = X, lambda = lambda)
+        result_list[[l]] = coordinate_descent_algolithm(Y = Y, X = X, lambda = lambda, penalty = penalty)
         scores[l] = (1/n)*sqrt(score)
         cat("lambda: ", lambda, "\t", " score: ", scores[l], "\n")
     }
