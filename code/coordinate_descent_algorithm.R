@@ -6,7 +6,9 @@ coordinate_descent_algolithm = function(
     gamma = 3.7,
     beta_init = NA,
     iter_max = 10000,
-    eps = 1e-3
+    eps = 1e-3,
+    save_init = FALSE,
+    save_process = FALSE
 ){
     n = length(Y)
     d = ncol(X)
@@ -28,7 +30,6 @@ coordinate_descent_algolithm = function(
 
     beta_0_list = rep(0, iter_max)
     beta_list = list()
-    obj_list  = list()
     args_list = list()
 
     if(all(is.na(beta_init))){
@@ -42,7 +43,7 @@ coordinate_descent_algolithm = function(
     beta_0 = (1/n)*sum(y - x%*%beta)
     beta_0_list[1] = beta_0
 
-    list_init = list(
+    init_list = list(
         penalty = penalty,
         beta_init = beta_init,
         lambda = lambda,
@@ -66,7 +67,12 @@ coordinate_descent_algolithm = function(
         obj[s + 1] = (1/n)*sum((y - beta_0 - x%*%beta)^2) + penalty_function(beta, lambda, penalty = penalty)
         convergence = (abs(obj[s + 1] - obj[s]) < eps)
         if(convergence == TRUE){
-            times_iter = s
+            process_list = list(
+                beta_0 = beta_0_list[1:(s+1)],
+                beta = beta_list,
+                obj = obj[1:(s+1)],
+                times_iter = s
+            )
             break
         }
     }
@@ -78,16 +84,19 @@ coordinate_descent_algolithm = function(
     rownames(coefficients) = c("(Intercept)", x_colnames)
     colnames(coefficients) = "coefficients"
 
+
     args_list = list(
         coefficients = coefficients,
-        lambda = lambda,
-        times_iter = times_iter,
-        init = list_init,
-        process = list(
-            beta_0 = beta_0_list,
-            beta = beta_list,
-            obj = obj_list
-        )
+        lambda = lambda
     )
+
+    if(save_init == TRUE){
+        args_list$init = init_list
+    }
+
+    if(save_process == TRUE){
+        args_list$process = process_list
+    }
+
     return(args_list)
 }
